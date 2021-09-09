@@ -1,0 +1,34 @@
+#!/usr/bin/env zsh
+
+set -uo pipefail
+# -u prevent using undefined variables
+# -o pipefail force pipelines to fail on first non-zero status code
+
+IFS=$'\n\t'
+# Set Internal Field Separator to newlines and tabs
+# This makes bash consider newlines and tabs as separating words
+# See: http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+
+# USAGE
+# Search a single specified PDF for every term in the file search_terms
+
+
+declare -r PDF_TO_SEARCH="${1}"
+
+if [[ $# -eq 0 ]] ; then
+    echo "No arguemnts given"
+    echo "USAGE: ./search_pdf some_doc.pdf"
+    exit 1
+fi
+
+declare -a SEARCH_TERMS
+
+while IFS= read -r SEARCH_TERM; do
+  SEARCH_TERMS+=("${SEARCH_TERM}")
+done < "../Code/search/search_terms"
+
+for SEARCH_TERM in ${SEARCH_TERMS[@]}; do
+  echo "[${SEARCH_TERM}]"
+  pdfgrep --ignore-case --after-context=5 --before-context=5 "${SEARCH_TERM}" "${PDF_TO_SEARCH}"
+done

@@ -1,0 +1,42 @@
+#!/usr/bin/env zsh
+
+set -uo pipefail
+# -u prevent using undefined variables
+# -o pipefail force pipelines to fail on first non-zero status code
+
+IFS=$'\n\t'
+# Set Internal Field Separator to newlines and tabs
+# This makes bash consider newlines and tabs as separating words
+# See: http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+declare LAST_PDF_NAME
+
+for PDF in *.pdf; do
+	
+	FIRST_LAST=$(echo "${PDF}" | awk -F '-' '{print $1 "-" $2}')
+
+	# echo "${PDF}"
+	# echo "${FIRST_LAST}"
+
+	if ! [[ -d "${FIRST_LAST}" ]]; then
+		mkdir "${FIRST_LAST}"
+		mv "${PDF}" "${FIRST_LAST}"
+	fi
+
+	if  [[ "${FIRST_LAST}" == "${LAST_PDF_NAME}" ]]; then
+		mv "${PDF}" "${FIRST_LAST}"
+	fi 
+
+	LAST_PDF_NAME="${FIRST_LAST}"
+done
+
+
+# Code to check for any PDFs still in the directory 
+# 	which were not added to a folder
+
+# for FILE in *;  do
+# 	if ! [[ -d "${FILE}" ]]; then
+# 		echo "${FILE}"
+# 	fi
+# done
+

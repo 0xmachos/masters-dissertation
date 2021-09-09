@@ -1,0 +1,29 @@
+#!/usr/bin/env zsh
+
+set -uo pipefail
+# -u prevent using undefined variables
+# -o pipefail force pipelines to fail on first non-zero status code
+
+IFS=$'\n\t'
+# Set Internal Field Separator to newlines and tabs
+# This makes bash consider newlines and tabs as separating words
+# See: http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+
+readonly URLS_FILE="../Code/pdf_urls.txt"
+
+count=0
+
+while IFS= read -r PDF_URL; do
+    curl --remote-name --remote-header-name --silent --show-error --retry 2 "${PDF_URL}"
+
+    count=$((count+1))
+    echo "${count}"
+    sleep 2
+done < "${URLS_FILE}"
+
+
+# response=$(curl -SI "${PDF_URL}")
+# if ! [[ "${response}" =~ 'HTTP/2 200' ]]; then
+#   echo "NOT 200: ${PDF_URL}"
+# fi

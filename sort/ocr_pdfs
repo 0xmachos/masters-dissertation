@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+# -e exit if any command returns non-zero status code
+# -u prevent using undefined variables
+# -o pipefail force pipelines to fail on first non-zero status code
+
+
+# Requires OCRmyPDF
+#   https://ocrmypdf.readthedocs.io/en/latest/introduction.html
+#   brew install ocrmypdf
+
+
+# See: https://ocrmypdf.readthedocs.io/en/latest/cookbook.html?highlight=--sidecar#produce-pdf-and-text-file-containing-ocr-text
+
+
+for PDF in *; do
+  ocrmypdf --skip-text --clean "${PDF}" "${PDF}"
+  # --skip-text https://ocrmypdf.readthedocs.io/en/latest/errors.html?highlight=--skip-text#page-already-has-text
+  # --clean https://ocrmypdf.readthedocs.io/en/latest/cookbook.html?highlight=--clean#image-processing
+done
+
